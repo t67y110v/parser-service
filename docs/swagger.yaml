@@ -1,0 +1,66 @@
+basePath: /
+definitions:
+  responses.Article:
+    properties:
+      annotation:
+        type: string
+      authors:
+        items:
+          type: string
+        type: array
+      journal:
+        type: string
+      journal_link:
+        type: string
+      link:
+        type: string
+      name:
+        type: string
+      ocr:
+        items:
+          type: string
+        type: array
+      year:
+        type: integer
+    type: object
+  responses.Error:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:4000
+info:
+  contact: {}
+  title: parser-service
+  version: "1.0"
+paths:
+  /parse/{querry}:
+    get:
+      consumes:
+      - application/json
+      description: Parser
+      parameters:
+      - description: Category
+        in: path
+        name: category
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Article'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.Error'
+      summary: Parse
+      tags:
+      - Parser
+swagger: "2.0"
