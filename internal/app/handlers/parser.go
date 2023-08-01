@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/t67y110v/parser-service/internal/app/parser"
 )
@@ -20,9 +22,15 @@ import (
 func (h *Handlers) Parse() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 
-		querry := c.Params("querry")
+		req := Qu{}
+		if err := c.BodyParser(&req); err != nil {
+			c.Status(http.StatusBadRequest)
+			return c.JSON(fiber.Map{
+				"message": err.Error(),
+			})
+		}
 
-		a := parser.Parse(querry)
+		a := parser.Parse(req.Querry)
 		return c.JSON(a)
 	}
 }
@@ -36,4 +44,24 @@ type Article struct {
 	Journal     string   `json:"journal,omitempty"`
 	JournalLink string   `json:"journal_link,omitempty"`
 	OCR         []string `json:"ocr,omitempty"`
+}
+
+type Qu struct {
+	Querry string `json:"find"`
+}
+
+func (h *Handlers) ParserAll() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+
+		req := Qu{}
+		if err := c.BodyParser(&req); err != nil {
+			c.Status(http.StatusBadRequest)
+			return c.JSON(fiber.Map{
+				"message": err.Error(),
+			})
+		}
+
+		a := parser.ParseAll(req.Querry)
+		return c.JSON(a)
+	}
 }

@@ -46,6 +46,7 @@ func (s *server) configureRouter() {
 
 	s.router.Get("/swagger/*", swagger.HandlerDefault)
 	s.router.Get("/parse/:querry", s.handlers.Parse())
+	s.router.Post("/parse/all", s.handlers.ParserAll())
 	///////// USER GROUP ///////////////
 	////////////////////////////////////
 
