@@ -8,6 +8,7 @@ import (
 
 	//"log"
 	"net/http"
+	"net/url"
 
 	"strings"
 )
@@ -35,7 +36,8 @@ func parseJSON(jsonData []byte) (Response, error) {
 func Parse(querry string) []Article {
 
 	client := &http.Client{}
-	var data = strings.NewReader(fmt.Sprintf(`{"year_to":2023,"year_from":2023,"mode":"articles","q":"%s","size":10,"from":0}`, querry))
+	decodedQuerry, _ := url.QueryUnescape(querry)
+	var data = strings.NewReader(fmt.Sprintf(`{"year_to":2023,"year_from":2023,"mode":"articles","q":"%s","size":10,"from":0}`, decodedQuerry))
 	req, err := http.NewRequest("POST", "https://cyberleninka.ru/api/search", data)
 	if err != nil {
 		log.Fatal(err)
