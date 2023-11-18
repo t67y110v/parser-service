@@ -16,9 +16,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/parse/{querry}": {
-            "get": {
-                "description": "Parser",
+        "/parser/cyberleninka": {
+            "post": {
+                "description": "parse one page to get informaion about nr",
                 "consumes": [
                     "application/json"
                 ],
@@ -28,21 +28,161 @@ const docTemplate = `{
                 "tags": [
                     "Parser"
                 ],
-                "summary": "Parse",
+                "summary": "Parse one page by current query",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Category",
-                        "name": "category",
-                        "in": "path",
-                        "required": true
+                        "description": "create new user",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.Body"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/responses.Article"
+                            "$ref": "#/definitions/responses.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/parser/cyberleninka/all": {
+            "post": {
+                "description": "parse all site to get informaion about nr",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Parser"
+                ],
+                "summary": "Parse all pages by current query",
+                "parameters": [
+                    {
+                        "description": "create new user",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.Body"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/parser/lvrach": {
+            "post": {
+                "description": "pars site to get informaion about nr",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Parser"
+                ],
+                "summary": "Parse page by current query",
+                "parameters": [
+                    {
+                        "description": "create new user",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.Body"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/parser/lvrach/all": {
+            "post": {
+                "description": "pars site to get informaion about nr",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Parser"
+                ],
+                "summary": "Parse all pages by current query",
+                "parameters": [
+                    {
+                        "description": "create new user",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.Body"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Response"
                         }
                     },
                     "400": {
@@ -62,38 +202,28 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "requests.Body": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string"
+                }
+            }
+        },
         "responses.Article": {
             "type": "object",
             "properties": {
                 "annotation": {
                     "type": "string"
                 },
-                "authors": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "journal": {
-                    "type": "string"
-                },
-                "journal_link": {
-                    "type": "string"
+                "id": {
+                    "type": "integer"
                 },
                 "link": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
-                },
-                "ocr": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "year": {
-                    "type": "integer"
                 }
             }
         },
@@ -104,18 +234,32 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "responses.Response": {
+            "type": "object",
+            "properties": {
+                "articles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/responses.Article"
+                    }
+                },
+                "found": {
+                    "type": "integer"
+                }
+            }
         }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
+	Version:          "2.0.0",
 	Host:             "localhost:4000",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "parser-service",
-	Description:      "",
+	Title:            "Parser service",
+	Description:      "Swag documentaion for parser service API",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

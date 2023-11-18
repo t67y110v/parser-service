@@ -1,29 +1,23 @@
 BINARY_NAME=server.exe
 USER_NAME=vova
 
+build: 
+	go build -o ${BINARY_NAME} cmd/apiserver/main.go
 
-run:	
-	go run cmd/server/main.go
+run:
+	go run cmd/apiserver/main.go
 
+run-binary:
+	./${BINARY_NAME}
+
+clean:
+	rm ${BINARY_NAME}
 
 test:
-	go test .
+	go test ./...
 
-
-
-build: 
-	go build -o ${BINARY_NAME} cmd/server/main.go
+test-coverage:
+	go test ./... -coverprofile=coverage.out
 
 swag:	
-	/home/${USER_NAME}/go/bin/swag init -g cmd/server/main.go
-
-docker.build:
-	sudo docker build -t api  .
-
-
-dc-build:
-	sudo docker-compose up --build api 
-
-
-dc-run:
-	sudo docker-compose up api
+	/home/${USER_NAME}/go/bin/swag init -g cmd/apiserver/main.go

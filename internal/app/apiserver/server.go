@@ -1,0 +1,52 @@
+package apiserver
+
+import (
+	"github.com/t67y110v/parser-service/internal/handlers"
+
+	_ "github.com/t67y110v/parser-service/docs"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/swagger"
+	"github.com/sirupsen/logrus"
+)
+
+type Server struct {
+	router   *fiber.App
+	logger   *logrus.Logger
+	handlers *handlers.Handlers
+	config   *Config
+}
+
+func newServer(config *Config, logger *logrus.Logger) *Server {
+
+	s := &Server{
+		router:   fiber.New(fiber.Config{ServerHeader: "parser API", AppName: "API v2.0.0"}),
+		handlers: handlers.NewHandlers(logger),
+		logger:   logger,
+		config:   config,
+	}
+
+	s.configureRouter()
+	return s
+}
+
+func (s *Server) configureRouter() {
+
+	s.router.Use(cors.New(cors.Config{
+		AllowHeaders:     "Origin, Content-Type, Accept",
+		AllowCredentials: true,
+		AllowOrigins:     "*",
+	}))
+
+	s.router.Get("/swagger/*", swagger.HandlerDefault)
+
+	parser := s.router.Group("/parser")
+
+	parser.Post("/lvrach", s.handlers.HandleLvrachParsePage())
+	parser.Post("/lvrach/all", s.handlers.HandleLvrachParseAll())
+
+	parser.Post("/cyberleninka", s.handlers.HandleCyberleninkaParsePage())
+	parser.Post("/cyberleninka/all", s.handlers.HandleCyberleninkaParseAll())
+
+}

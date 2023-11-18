@@ -1,57 +1,61 @@
 basePath: /
 definitions:
+  requests.Body:
+    properties:
+      query:
+        type: string
+    type: object
   responses.Article:
     properties:
       annotation:
         type: string
-      authors:
-        items:
-          type: string
-        type: array
-      journal:
-        type: string
-      journal_link:
-        type: string
+      id:
+        type: integer
       link:
         type: string
       name:
         type: string
-      ocr:
-        items:
-          type: string
-        type: array
-      year:
-        type: integer
     type: object
   responses.Error:
     properties:
       message:
         type: string
     type: object
+  responses.Response:
+    properties:
+      articles:
+        items:
+          $ref: '#/definitions/responses.Article'
+        type: array
+      found:
+        type: integer
+    type: object
 host: localhost:4000
 info:
   contact: {}
-  title: parser-service
-  version: "1.0"
+  description: Swag documentaion for parser service API
+  title: Parser service
+  version: 2.0.0
 paths:
-  /parse/{querry}:
-    get:
+  /parser/cyberleninka:
+    post:
       consumes:
       - application/json
-      description: Parser
+      description: parse one page to get informaion about nr
       parameters:
-      - description: Category
-        in: path
-        name: category
+      - description: create new user
+        in: body
+        name: data
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/requests.Body'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/responses.Article'
+            $ref: '#/definitions/responses.Response'
         "400":
           description: Bad Request
           schema:
@@ -60,7 +64,97 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/responses.Error'
-      summary: Parse
+      summary: Parse one page by current query
+      tags:
+      - Parser
+  /parser/cyberleninka/all:
+    post:
+      consumes:
+      - application/json
+      description: parse all site to get informaion about nr
+      parameters:
+      - description: create new user
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/requests.Body'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.Error'
+      summary: Parse all pages by current query
+      tags:
+      - Parser
+  /parser/lvrach:
+    post:
+      consumes:
+      - application/json
+      description: pars site to get informaion about nr
+      parameters:
+      - description: create new user
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/requests.Body'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.Error'
+      summary: Parse page by current query
+      tags:
+      - Parser
+  /parser/lvrach/all:
+    post:
+      consumes:
+      - application/json
+      description: pars site to get informaion about nr
+      parameters:
+      - description: create new user
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/requests.Body'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.Error'
+      summary: Parse all pages by current query
       tags:
       - Parser
 swagger: "2.0"
