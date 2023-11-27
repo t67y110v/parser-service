@@ -73,6 +73,11 @@ func (l Lvrach) All(query string) (*models.Response, error) {
 
 	count := (amount / 15) - 1
 
+	if count <= 0 {
+		l.logger.Error("zero or negative counter of pages")
+		return nil, err
+	}
+
 	l.logger.Info("pages to parse - ", count, " by query ", query)
 	wg := sync.WaitGroup{}
 
